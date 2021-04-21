@@ -4,12 +4,27 @@
 #     Pkg.add("Yao")
 #     Pkg.add("YaoPlots")
 
-using Yao,YaoPlots,LinearAlgebra
+using Yao,YaoPlots,LinearAlgebra,Compose,Base.Filesystem
+
+function svgplot(args...)
+    file = tempname() * ".svg"
+    draw(SVG(file, 24cm, 8cm),plot(args...))
+    open(file) do f
+        display("image/svg+xml", read(f, String))
+    end
+end;
+
+#svgplot(args...) = plot(args...)
 ```
 
 # Quantum Fourier Transform 
 
-shift gate $${\rm shift}(\theta) = \left(\begin{array}{cc} 1 & 0 \\ 0 & e^{i\theta} \end{array}\right)$$
+shift gate 
+
+shift(θ) = [ 
+    1, 0 ;
+    0, exp(iθ) 
+]             
 
 
 ```julia
@@ -20,20 +35,16 @@ qft(n) = chain(n,
     chain(swap(k,n-k+1) for k in Int.(1:(n/2)))
 )
 
-plot(qft(5))
+svgplot(qft(5))
 ```
 
 
-
-
-![circuit](./output_3_0.svg)
-
-
+![svg](output_3_0.svg)
 
 
 # Phase Estimation
 
-We define $U(i) = U^{2^i}$ as a composition of $2^i$ gates $U$
+We define U(i) = U^2ⁱ as a composition of 2ⁱ gates U
 
 
 ```julia
@@ -42,13 +53,11 @@ ublock(i,n,p,U) = chain(
     control(p-i, p+1:p+n => label(matblock(U^(2^i)), "U($i)"))
 )
 ucircuit(n,p,U) = chain(n+p, ublock(i-1,n,p,U) for i in 1:p)
-plot(ucircuit(2,4,rand_unitary(2^2)))
+svgplot(ucircuit(2,4,rand_unitary(2^2)))
 ```
 
 
-![circuit](./output_6_0.svg)
-
-
+![svg](output_6_0.svg)
 
 
 ### Full Phase Estimation circuit
@@ -56,18 +65,16 @@ plot(ucircuit(2,4,rand_unitary(2^2)))
 
 ```julia
 pecircuit(n,p,U) = chain(ucircuit(n,p,U), put(1:p => qft(p)'))
-plot(pecircuit(2,4,rand_unitary(2^2)))
+svgplot(pecircuit(2,4,rand_unitary(2^2)))
 ```
 
 
-
-![circuit](./output_8_0.svg)
-
+![svg](output_8_0.svg)
 
 
 # Run the experiment
 
-Construct a random $n$-qubit unitary matrix $U$ with eigenvalues $e^{2\pi i \frac{k}{2^{p}}}$ for integers $k$ and $p$. The precision $p$ refers to the number of bits necessary to describe the phase
+Construct a random n-qubit unitary matrix U with eigenvalues exp(2πik/2^p) for integers k and p. The precision p refers to the number of bits necessary to describe the phase
 
 
 ```julia
@@ -81,10 +88,10 @@ eigenvalues = [rand(0:2^p-1) for k in 1:2^n]
 
 
     4-element Vector{Int64}:
+     12
+     12
      15
-     10
-      0
-      2
+      6
 
 
 
@@ -98,10 +105,10 @@ U = V*Diagonal(map(k-> exp(2π*1im*k/2^p), eigenvalues))*V'
 
 
     4×4 Matrix{ComplexF64}:
-        0.19203-0.429134im     0.169573-0.156469im   …   -0.502645+0.0956219im
-       0.233272+0.00820405im   0.854775-0.0391563im     -0.0437506+0.254727im
-       0.701454+0.254696im    -0.135611-0.121987im        0.442213+0.0418809im
-     -0.0118975-0.409189im    0.0719627+0.41969im         0.551616+0.41209im
+      0.068016-0.336556im     0.230579+0.306976im   …    0.76528-0.0898499im
+      0.283872+0.410863im     0.359875-0.696835im       0.278199+0.186482im
+     -0.332784-0.0572137im  -0.0840131-0.0185766im        0.2881+0.41899im
+      0.151716-0.704043im     0.404658-0.257602im      -0.125647+0.140578im
 
 
 
@@ -146,13 +153,16 @@ sort(eigenvalues)
 
 
     4-element Vector{Int64}:
-      0
-      2
-     10
+      6
+     12
+     12
      15
 
 
 
-The only possible outcomes are the eigenvalues of $U$
+The only possible outcomes are the eigenvalues of U
 
 
+```julia
+
+```
