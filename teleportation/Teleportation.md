@@ -1,10 +1,5 @@
 ```julia
-# install Yao/YaoPlots via 
-#     using Pkg
-#     Pkg.add("Yao")
-#     Pkg.add("YaoPlots")
-
-using Yao,YaoPlots
+include("../yaoimport.jl");
 ```
 
 # create a maximally entangled Bell state
@@ -32,12 +27,13 @@ state(Φ)
 
 
 ```julia
-plot(Φcircuit)
+svgplot(Φcircuit)
 ```
 
 
-![circuit](./output_3_0.svg)
-
+    
+![svg](output_3_0.svg)
+    
 
 
 # define the teleportation circuit
@@ -50,26 +46,26 @@ tele = chain(3,
     control(2,3=>X),
     control(1,3=>Z),
 )
-plot(tele)
+svgplot(tele)
 ```
 
 
-![circuit](./output_5_0.svg)
-
+    
+![svg](output_5_0.svg)
+    
 
 
  total circuit
 
 
 ```julia
-chain(3, put(2:3 => Φcircuit), tele) |> plot
+chain(3, put(2:3 => Φcircuit), tele) |> svgplot
 ```
 
 
-
-![circuit](./output_7_0.svg)
-
-
+    
+![svg](output_7_0.svg)
+    
 
 
 # run teleportation
@@ -84,8 +80,8 @@ state(ψ)
 
 
     2×1 Matrix{ComplexF64}:
-     -0.4190847132945371 + 0.665075241826809im
-      0.5669440122932977 - 0.24620603712464928im
+     0.06792629615178038 + 0.4137280604342298im
+     0.03792192079546314 - 0.9070705806185169im
 
 
 
@@ -99,14 +95,14 @@ state(out)
 
 
     8×1 Matrix{ComplexF64}:
-     -0.419084713294537 + 0.6650752418268089im
-                    0.0 + 0.0im
-                    0.0 + 0.0im
-                    0.0 + 0.0im
-     0.5669440122932976 - 0.24620603712464922im
-                   -0.0 - 0.0im
-                   -0.0 + 0.0im
-                   -0.0 - 0.0im
+     0.06792629615178036 + 0.4137280604342297im
+                     0.0 + 0.0im
+                     0.0 + 0.0im
+                     0.0 + 0.0im
+     0.03792192079546313 - 0.9070705806185168im
+                    -0.0 - 0.0im
+                     0.0 + 0.0im
+                    -0.0 - 0.0im
 
 
 
@@ -122,8 +118,8 @@ state(out)
 
 
     2×1 Matrix{ComplexF64}:
-     -0.4190847132945371 + 0.665075241826809im
-      0.5669440122932977 - 0.24620603712464928im
+     0.06792629615178038 + 0.4137280604342298im
+     0.03792192079546314 - 0.907070580618517im
 
 
 
