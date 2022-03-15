@@ -1,20 +1,5 @@
 ```julia
-# install Yao/YaoPlots via 
-#     using Pkg
-#     Pkg.add("Yao")
-#     Pkg.add("YaoPlots")
-
-using Yao,YaoPlots,LinearAlgebra,Compose,Base.Filesystem
-
-function svgplot(args...)
-    file = tempname() * ".svg"
-    draw(SVG(file, 24cm, 8cm),plot(args...))
-    open(file) do f
-        display("image/svg+xml", read(f, String))
-    end
-end;
-
-#svgplot(args...) = plot(args...)
+include("../yaoimport.jl");
 ```
 
 # Quantum Fourier Transform 
@@ -39,7 +24,9 @@ svgplot(qft(5))
 ```
 
 
+    
 ![svg](output_3_0.svg)
+    
 
 
 # Phase Estimation
@@ -57,19 +44,23 @@ svgplot(ucircuit(2,4,rand_unitary(2^2)))
 ```
 
 
+    
 ![svg](output_6_0.svg)
+    
 
 
-### Full Phase Estimation circuit
+## Full Phase Estimation circuit
 
 
 ```julia
-pecircuit(n,p,U) = chain(ucircuit(n,p,U), put(1:p => qft(p)'))
+pecircuit(n,p,U) = chain(n+p,ucircuit(n,p,U), put(1:p => qft(p)'))
 svgplot(pecircuit(2,4,rand_unitary(2^2)))
 ```
 
 
+    
 ![svg](output_8_0.svg)
+    
 
 
 # Run the experiment
@@ -88,10 +79,10 @@ eigenvalues = [rand(0:2^p-1) for k in 1:2^n]
 
 
     4-element Vector{Int64}:
-     12
-     12
+      3
+      3
      15
-      6
+     13
 
 
 
@@ -105,10 +96,10 @@ U = V*Diagonal(map(k-> exp(2π*1im*k/2^p), eigenvalues))*V'
 
 
     4×4 Matrix{ComplexF64}:
-      0.068016-0.336556im     0.230579+0.306976im   …    0.76528-0.0898499im
-      0.283872+0.410863im     0.359875-0.696835im       0.278199+0.186482im
-     -0.332784-0.0572137im  -0.0840131-0.0185766im        0.2881+0.41899im
-      0.151716-0.704043im     0.404658-0.257602im      -0.125647+0.140578im
+      0.504846-0.0369425im   0.429812+0.442339im   …   0.360438-0.317424im
+     -0.565263+0.249829im    0.496072+0.49449im       -0.111268-0.0521811im
+      0.048164-0.00146753im  -0.22432+0.0499666im     -0.110616-0.734248im
+     -0.535761-0.2692im      0.170467-0.217058im       0.450347-0.00734329im
 
 
 
@@ -120,8 +111,9 @@ U = V*Diagonal(map(k-> exp(2π*1im*k/2^p), eigenvalues))*V'
 
 
 
-    ArrayReg{1, ComplexF64, Array...}
-        active qubits: 6/6
+    ArrayReg{2, ComplexF64, Array...}
+        active qudits: 6/6
+        nlevel: 2
 
 
 
@@ -140,7 +132,9 @@ bar(counts, legend=nothing)
 
 
 
+    
 ![svg](output_14_0.svg)
+    
 
 
 
@@ -153,9 +147,9 @@ sort(eigenvalues)
 
 
     4-element Vector{Int64}:
-      6
-     12
-     12
+      3
+      3
+     13
      15
 
 
